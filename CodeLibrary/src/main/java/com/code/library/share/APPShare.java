@@ -18,6 +18,7 @@ import com.code.library.share.utils.AccessTokenKeeper;
 import com.code.library.share.utils.BitmapUtils;
 import com.code.library.share.utils.DownLoadHelper;
 import com.code.library.share.utils.HttpHelper;
+import com.code.library.utils.LogUtils;
 import com.sina.weibo.sdk.api.ImageObject;
 import com.sina.weibo.sdk.api.TextObject;
 import com.sina.weibo.sdk.api.WeiboMultiMessage;

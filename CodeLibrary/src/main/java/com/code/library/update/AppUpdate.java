@@ -13,7 +13,7 @@ import com.code.library.dialog.PromptDialog;
 import com.code.library.http.DownloadHelper;
 import com.code.library.http.OkHttpUtils;
 import com.code.library.http.callback.JsonCallBack;
-import com.code.library.share.utils.SharedConfig;
+import com.code.library.utils.SharedConfig;
 import com.code.library.toast.ToastFactory;
 import com.code.library.utils.LogUtils;
 import com.code.library.utils.NetworkUtil;

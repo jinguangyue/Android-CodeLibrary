@@ -5,6 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import com.code.library.AppConstant;
+import com.code.library.R;
+import com.code.library.toast.ToastFactory;
+
 /**
  * Created by yue on 2016/5/22.
  * 应用打开方式 1 应用市场 2 打开url 3 打开内部webview 4 直接下载
@@ -76,11 +80,11 @@ public class CommandAppUtil {
      * @param url
      */
     public static void downUrl(Activity activity, String url, String name) {
-        /*ToastFactory.showToast(activity, activity.getResources().getString(R.string.download_loading_wait));
+        ToastFactory.showToast(activity, activity.getResources().getString(R.string.download_loading_wait));
         Intent intent = new Intent(activity, ServiceDownLoadApk.class);
         intent.putExtra(AppConstant.KEY.DOWNLOADAPKURL, url);
         intent.putExtra(AppConstant.KEY.DOWNLOADAPKNAME, name);
-        activity.startService(intent);*/
+        activity.startService(intent);
     }
 }
 

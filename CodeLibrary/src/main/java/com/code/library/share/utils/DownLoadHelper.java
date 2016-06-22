@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.code.library.share.AppParam;
+import com.code.library.utils.LogUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;

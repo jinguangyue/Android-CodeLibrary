@@ -40,7 +40,6 @@ public class BottomListDialog extends Dialog {
     }
 
     public static class Builder {
-
         private BottomListDialog dialog;
         private Context context;
         private OnCancelListener onCancelListener;

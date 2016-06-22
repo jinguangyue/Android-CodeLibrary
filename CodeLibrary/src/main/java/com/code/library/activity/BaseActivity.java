@@ -22,7 +22,8 @@ public abstract class BaseActivity extends FragmentActivity {
     protected Activity activity;
 
     protected ImageButton titleBack;
-    protected TextView titleText, titleAction;
+    protected ImageButton titleAction;
+    protected TextView titleText;
     protected ImageButton titleActionImg;
 
     protected boolean addTask = true;
@@ -130,7 +131,7 @@ public abstract class BaseActivity extends FragmentActivity {
     protected void getTitleBar() {
         titleBack = (ImageButton) findViewById(R.id.title_back);
         titleText = (TextView) findViewById(R.id.title_text);
-        titleAction = (TextView) findViewById(R.id.title_action);
+        titleAction = (ImageButton) findViewById(R.id.title_action);
     }
 
     protected void getImgTitleBar() {

@@ -1,1 +1,1 @@
-include ':app', ':CodeLibrary'
+include ':CodeLibrary', ':codelibtest'

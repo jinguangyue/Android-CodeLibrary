@@ -1,6 +1,7 @@
 package com.code.library.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -28,7 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * Created by yue on 15/10/29.
+ * Created by Wxcily on 15/10/29.
  * Bitmap处理工具
  */
 public class BitmapUtils {
@@ -272,6 +273,93 @@ public class BitmapUtils {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static Bitmap decodeBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        //可以只获取宽高而不加载
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, options);
+
+        //计算压缩比例
+        options = calculateInSampleSize(options, reqWidth, reqHeight);
+        return BitmapFactory.decodeResource(res, resId, options);
+    }
+
+    /**
+     * 图片压缩处理（使用Options的方法）
+     *
+     * @使用方法 首先你要将Options的inJustDecodeBounds属性设置为true，BitmapFactory.decode一次图片。
+     *       然后将Options连同期望的宽度和高度一起传递到到本方法中。
+     *       之后再使用本方法的返回值做参数调用BitmapFactory.decode创建图片。
+     *
+     * @explain BitmapFactory创建bitmap会尝试为已经构建的bitmap分配内存
+     *          ，这时就会很容易导致OOM出现。为此每一种创建方法都提供了一个可选的Options参数
+     *          ，将这个参数的inJustDecodeBounds属性设置为true就可以让解析方法禁止为bitmap分配内存
+     *          ，返回值也不再是一个Bitmap对象， 而是null。虽然Bitmap是null了，但是Options的outWidth、
+     *          outHeight和outMimeType属性都会被赋值。
+     * @param reqWidth
+     *            目标宽度
+     * @param reqHeight
+     *            目标高度
+     */
+    public static BitmapFactory.Options calculateInSampleSize(
+            final BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // 源图片的高度和宽度
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+        if (height > reqHeight || width > reqWidth) {
+            // 计算出实际宽高和目标宽高的比率
+            final int heightRatio = Math.round((float) height
+                    / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+            // 选择宽和高中最小的比率作为inSampleSize的值，这样可以保证最终图片的宽和高
+            // 一定都会大于等于目标的宽和高。
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+        // 设置压缩比例
+        options.inSampleSize = inSampleSize;
+        options.inJustDecodeBounds = false;
+        return options;
+    }
+/*
+
+    public static BitmapFactory.Options createBitmap(BitmapFactory.Options options ,int bwidth, int bheight, int reqWidth, int reqHeight){
+        int inSampleSize = 1;
+        if (bheight > reqHeight || bwidth > reqWidth) {
+            // 计算出实际宽高和目标宽高的比率
+            final int heightRatio = Math.round((float) bheight
+                    / (float) reqHeight);
+            final int widthRatio = Math.round((float) bwidth / (float) reqWidth);
+            // 选择宽和高中最小的比率作为inSampleSize的值，这样可以保证最终图片的宽和高
+            // 一定都会大于等于目标的宽和高。
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+        // 设置压缩比例
+        options.inSampleSize = inSampleSize;
+        options.inJustDecodeBounds = false;
+        return options;
+    }
+*/
+
+    //提取图像Alpha位图
+    public static Bitmap getAlphaBitmap(Bitmap mBitmap, int mColor) {
+        //BitmapDrawable的getIntrinsicWidth（）方法，Bitmap的getWidth（）方法
+        //注意这两个方法的区别
+        //Bitmap mAlphaBitmap = Bitmap.createBitmap(mBitmapDrawable.getIntrinsicWidth(), mBitmapDrawable.getIntrinsicHeight(), Config.ARGB_8888);
+        Bitmap mAlphaBitmap = Bitmap.createBitmap(mBitmap.getWidth(), mBitmap.getHeight(), Config.ARGB_8888);
+
+        Canvas mCanvas = new Canvas(mAlphaBitmap);
+        Paint mPaint = new Paint();
+
+        mPaint.setColor(mColor);
+        //从原位图中提取只包含alpha的位图
+        Bitmap alphaBitmap = mBitmap.extractAlpha();
+        //在画布上（mAlphaBitmap）绘制alpha位图
+        mCanvas.drawBitmap(alphaBitmap, 0, 0, mPaint);
+
+        return mAlphaBitmap;
     }
 
     /**
@@ -533,10 +621,11 @@ public class BitmapUtils {
 
     /**
      * 垂直翻转
+     *
      * @param bmp
      * @return
      */
-    public static Bitmap convertVertical(Bitmap bmp){
+    public static Bitmap convertVertical(Bitmap bmp) {
         int w = bmp.getWidth();
         int h = bmp.getHeight();
 
@@ -550,16 +639,35 @@ public class BitmapUtils {
     /**
      * 将手机中的文件转换为Bitmap类型
      *
-     * @param fileName
+     * @param path 期望宽高
      * @return
      */
-    public static Bitmap getBitemapFromFile(String fileName) {
+    public static Bitmap decodeFile(String path, int screenWidth, int screenHeight) {
+        Bitmap bm = null;
+        BitmapFactory.Options opt = new BitmapFactory.Options();
+        //这个isjustdecodebounds很重要
+        opt.inJustDecodeBounds = true;
+        bm = BitmapFactory.decodeFile(path, opt);
 
-        try {
-            return BitmapFactory.decodeFile(fileName);
-        } catch (Exception ex) {
-            return null;
+        //获取到这个图片的原始宽度和高度
+        int picWidth = opt.outWidth;
+        int picHeight = opt.outHeight;
+
+        //isSampleSize是表示对图片的缩放程度，比如值为2图片的宽度和高度都变为以前的1/2
+        opt.inSampleSize = 1;
+        //根据屏的大小和图片大小计算出缩放比例
+        if (picWidth > picHeight) {
+            if (picWidth > screenWidth)
+                opt.inSampleSize = picWidth / screenWidth;
+        } else {
+            if (picHeight > screenHeight)
+                opt.inSampleSize = picHeight / screenHeight;
         }
+
+        //这次再真正地生成一个有像素的，经过缩放了的bitmap
+        opt.inJustDecodeBounds = false;
+        bm = BitmapFactory.decodeFile(path, opt);
+        return bm;
     }
 
     /**
@@ -647,7 +755,7 @@ public class BitmapUtils {
             bitmap = Bitmap.createBitmap(cacheBitmap);// 将位图实例化
 
         } catch (OutOfMemoryError e) {
-            while(bitmap == null) {
+            while (bitmap == null) {
                 System.gc();
                 System.runFinalization();
                 bitmap = Bitmap.createBitmap(cacheBitmap);// 将位图实例化
@@ -698,17 +806,17 @@ public class BitmapUtils {
         MediaScannerConnection.scanFile(context, new String[]{path}, null, null);
     }
 
-    public static Bitmap returnSaturationBitmap(Bitmap bitmap){
+    public static Bitmap returnSaturationBitmap(Context context, Bitmap bitmap, int screenWidth, int screenHeight) {
         Bitmap bmp = null;
-        try {
-            bmp = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
-        } catch (OutOfMemoryError e) {
-            while(bitmap == null) {
-                System.gc();
-                System.runFinalization();
-                bmp = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
-            }
-        }
+/*
+        int maxWidth = MyApplication.getInstance().getScreenWidth() - SystemUtils.dp2px(context, 20);
+        int maxHeight = maxWidth * 4 / 3;*/
+
+        int reqWidth = screenWidth - SystemUtils.dp2px(context, 20);
+        int reqHeight = reqWidth * 4 / 3;
+
+        bmp = createBitmap(bitmap, reqWidth, reqHeight);
+
         ColorMatrix cMatrix = new ColorMatrix();
         // 设置饱和度
         cMatrix.setSaturation(0.0f);
@@ -723,20 +831,65 @@ public class BitmapUtils {
     }
 
     /**
+     * 创建期望大小的bitmap
+     * @param bitmap
+     * @param reqWidth
+     * @return
+     */
+    public static Bitmap createBitmap(Bitmap bitmap, int reqWidth, int reqHeight){
+        Bitmap bmp = null;
+        int inSampleSize = 0;
+
+        int bWidth = bitmap.getWidth();
+        int bHeight = bitmap.getHeight();
+
+        if (bHeight > reqHeight || bWidth > reqWidth) {
+            // 计算出实际宽高和目标宽高的比率
+            final int heightRatio = Math.round((float) bHeight
+                    / (float) reqHeight);
+            final int widthRatio = Math.round((float) bWidth / (float) reqWidth);
+            // 选择宽和高中最小的比率作为inSampleSize的值，这样可以保证最终图片的宽和高
+            // 一定都会大于等于目标的宽和高。
+            inSampleSize = heightRatio < widthRatio ? widthRatio : heightRatio;
+        }
+        try {
+            if(inSampleSize != 0){
+                bmp = Bitmap.createBitmap(bWidth/inSampleSize, bHeight/inSampleSize, Config.ARGB_8888);
+            }else{
+                bmp = Bitmap.createBitmap(bWidth, bHeight, Config.ARGB_8888);
+            }
+        } catch (OutOfMemoryError e) {
+            e.printStackTrace();
+            while (bmp == null) {
+                System.gc();
+                System.runFinalization();
+                if(inSampleSize != 0){
+                    bmp = Bitmap.createBitmap(bWidth/inSampleSize, bHeight/inSampleSize, Config.ARGB_8888);
+                }else{
+                    bmp = Bitmap.createBitmap(bWidth, bHeight, Config.ARGB_8888);
+                }
+            }
+        }
+
+        return bmp;
+    }
+
+    /**
      * 圆形Bitmap
+     *
      * @param bitmap
      * @return
      */
-    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap){
+    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
         Bitmap outBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
         Canvas canvas = new Canvas(outBitmap);
-        final int color =0xff424242;
+        final int color = 0xff424242;
         final Paint paint = new Paint();
-        final Rect rect = new Rect(0,0,bitmap.getWidth(),bitmap.getHeight());
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
         final RectF rectF = new RectF(rect);
-        final float roundPX = bitmap.getWidth()/2;
+        final float roundPX = bitmap.getWidth() / 2;
         paint.setAntiAlias(true);
-        canvas.drawARGB(0,0,0,0);
+        canvas.drawARGB(0, 0, 0, 0);
         paint.setColor(color);
         canvas.drawRoundRect(rectF, roundPX, roundPX, paint);
         paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
@@ -746,11 +899,12 @@ public class BitmapUtils {
 
     /**
      * 改变bitmap 对比度
+     *
      * @param bitmap
      * @param progress
      * @return
      */
-    public static Bitmap returnContrastBitmap(Bitmap bitmap, int progress){
+    public static Bitmap returnContrastBitmap(Bitmap bitmap, int progress) {
         //曝光度
         Bitmap contrast_bmp = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(),
                 Config.ARGB_8888);

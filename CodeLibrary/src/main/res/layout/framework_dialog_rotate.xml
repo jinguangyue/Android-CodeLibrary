@@ -5,7 +5,7 @@
     android:background="@drawable/framework_dialog_bg_rotate"
     android:padding="13dp">
 
-    <com.funny.library.view.RotateImageView
+    <com.code.library.view.RotateImageView
         android:id="@+id/rotateImageView"
         android:layout_width="35dp"
         android:layout_height="35dp"

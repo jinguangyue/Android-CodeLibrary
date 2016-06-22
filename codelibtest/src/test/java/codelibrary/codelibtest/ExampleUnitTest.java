@@ -1,4 +1,4 @@
-package com.code.library;
+package codelibrary.codelibtest;
 
 import org.junit.Test;
 
