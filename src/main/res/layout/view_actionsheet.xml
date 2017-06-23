@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/Gray"
+    >
+
+    <TextView
+        android:id="@+id/txt_title"
+        android:layout_width="match_parent"
+        android:layout_height="33dp"
+        android:background="@color/White"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:textColor="@color/Gray5"
+        android:textSize="10sp"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:id="@+id/sLayout_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fadingEdge="none"
+         >
+
+        <LinearLayout
+            android:id="@+id/lLayout_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </LinearLayout>
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/txt_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/whitef5"
+        android:gravity="center"
+        android:text="@string/Cancel"
+        android:textColor="@color/darkGray"
+        android:textSize="15sp"
+        android:textStyle="normal" />
+
+</LinearLayout>
