@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/CodeLibrary.iml" filepath="$PROJECT_DIR$/CodeLibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/CodeLibrary/CodeLibrary-CodeLibrary.iml" filepath="$PROJECT_DIR$/CodeLibrary/CodeLibrary-CodeLibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CodeLibrary/CodeLibrary-CodeLibrary.iml" filepath="$PROJECT_DIR$/CodeLibrary/CodeLibrary-CodeLibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/codelibtest/codelibtest.iml" filepath="$PROJECT_DIR$/codelibtest/codelibtest.iml" />
     </modules>
   </component>

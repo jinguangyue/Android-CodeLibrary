@@ -9,12 +9,6 @@ import com.code.library.thread.ClearTempThread;
 import com.code.library.update.AppUpdate;
 import com.code.library.utils.DeviceInfoUtils;
 import com.code.library.utils.LogUtils;
-import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
-import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 import java.io.File;
 
@@ -70,7 +64,6 @@ public class MyApplication extends Application {
         screenWidth = DeviceInfoUtils.getScreenWidth(this);//获取屏幕宽度
         screenHeight = DeviceInfoUtils.getScreenHeight(this);//获取屏幕高度
         initDir();//初始化默认路径
-        initImageLoader();//初始化ImageLoader
         initMemorySize();//打印APP最大可以申请的内存
         APPShare.getInstance().init(this);//初始化shareSDK
         AppUpdate.getInstance().init(this,AppConfig.UPDATE_URL,false);//初始化更新
@@ -123,28 +116,6 @@ public class MyApplication extends Application {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-    }
-
-    private void initImageLoader() {
-        File file = new File(CACHE_PATH + File.separator + AppConfig.ImageLoaderCache);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.img_picloading) // 设置图片下载期间显示的图片
-                .cacheInMemory(true) // 设置下载的图片是否缓存在内存中
-                .cacheOnDisk(true)
-                .build(); // 创建配置过得DisplayImageOption对象
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-                getApplicationContext())
-                .defaultDisplayImageOptions(defaultOptions)
-                .denyCacheImageMultipleSizesInMemory()
-                .tasksProcessingOrder(QueueProcessingType.FIFO)
-                .diskCache(new UnlimitedDiskCache(file))
-                .diskCacheSize(AppConfig.ImageLoaderCacheSzie)
-                .diskCacheFileNameGenerator(new Md5FileNameGenerator())
-                .build();
-        ImageLoader.getInstance().init(config);
     }
 
     //用于打印APP最多可申请的内存
